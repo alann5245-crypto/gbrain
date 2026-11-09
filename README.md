@@ -1,135 +1,127 @@
 <h1><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/brand/gbrain-wordmark-light.svg"><img src="docs/images/brand/gbrain-wordmark.svg" alt="GBrain" height="52"></picture></h1>
 
-**Give the agent you already use a memory you control.** GBrain stores explicit facts with their sources, supports corrections and withdrawal, and makes the same memory available across your agents. Start with keyless memory and keyword retrieval; add semantic search, synthesis, and background enrichment when you need them.
+**Cung cấp cho trợ lý AI bạn đang dùng một bộ nhớ do chính bạn kiểm soát.** GBrain lưu trữ các dữ kiện rõ ràng kèm nguồn gốc trích dẫn, hỗ trợ chỉnh sửa hoặc thu hồi thông tin, và chia sẻ cùng một bộ nhớ xuyên suốt cho mọi trợ lý AI của bạn. Bắt đầu với bộ nhớ không cần API key và tìm kiếm theo từ khóa; mở rộng thêm tìm kiếm ngữ nghĩa (semantic search), tổng hợp câu trả lời và tự động làm giàu dữ liệu nền khi bạn cần.
 
-GBrain is MIT-licensed and free to self-host; gbrain.io is optional paid hosting.
-
-> [!TIP]
-> **Need hosted? First time running an agent?** Try **[gbrain.io](https://gbrain.io/?ref=readme)**, hosted GBrain, for the easiest experience: one brain for you and your team, connected to ChatGPT, Claude and Cursor, with nothing to install or keep online. Stuck? Email support@gbrain.io and a person will set it up with you, free.
-
-**Keep skills beside knowledge.** New local brains include memory skills in their
-content root. Agents can join an authorized catalog; only approved editors can
-publish. Managed coding-agent installs add an owned native router; restart and
-real-use verification are separate steps. Staged migration preserves sharing
-choices and personal edits. See [shared brain skills](docs/guides/shared-brain-skills.md).
-
-## Choose your setup
-
-1. **Add GBrain to my existing agent — recommended.** Keep your agent's identity and save memory inside its environment. No new personal-agent identity or private repository is required. Start with the guide for **[Grok Bot](docs/guides/grok-bot.md)**, **[Muse](docs/guides/muse.md)**, or **[Codex / Claude Code](docs/tutorials/connect-coding-agent.md)**. [Other harnesses](#connect-gbrain-to-your-ai-client-mcp).
-2. **Use the brain on my own computer from everywhere.** One command publishes it over MCP on your Tailscale tailnet and keeps it running: `gbrain mcp expose` (add `--funnel` for cloud agents such as Grok Bot, Muse and ChatGPT). Follow **[use your brain from anywhere over MCP](docs/guides/remote-mcp.md)**. **Say to your agent:** *"use my brain over mcp"* — *"put my brain on tailscale"*.
-3. **Connect my existing hosted brain.** Follow **[hosted harness access](docs/guides/hosted-harness-access.md)** to choose native OAuth or a private machine connection. For dashboard login, clients, and permissions, use **[MCP administration](docs/mcp/ADMIN.md)** with the server's separate owner credential. Delegation is an explicit choice.
-
-Grok **Bot** and Grok **Build** are different products. Muse's personal agent and **Muse Code** are different products too. Muse already has native editable memory; GBrain adds an explicit, portable record with provenance and shared access. See each guide's dated evidence and remaining verification steps.
-
-I'm Garry Tan, President and CEO of Y Combinator. I built GBrain to run my own AI agents. It's the production brain behind my OpenClaw and Hermes deployments: **155,795 pages, 24,589 people, 5,340 companies**, 66 cron jobs running autonomously. My agent ingests meetings, emails, tweets, voice calls, and original ideas while I sleep. It enriches every person and company it encounters. It fixes its own citations and consolidates memory overnight. I wake up smarter than when I went to bed — and so will you.
-
-**It works as a company brain too.** Authenticated remote clients are constrained by source and operation grants plus visibility filters. Local files and shared database credentials are a different trust boundary: sources alone do not isolate those callers. The authorization tests exercise specific access paths, not a universal no-leak guarantee. Read the [sharing boundaries](docs/architecture/brains-and-sources.md#what-confines-remote-callers-and-what-does-not) and [company-brain tutorial](docs/tutorials/company-brain.md) before setting up shared access.
-
-Alongside keyword and semantic retrieval, GBrain offers two optional ways to use your stored knowledge:
-
-- **A synthesis layer that gives you the actual answer.** Synthesized, well-cited prose across people, companies, deals, and ideas. Not "here are 10 chunks that mention your query"; an actual answer with citations and an explicit note on what the brain doesn't know yet. The gap analysis is the part that changes how you use the brain.
-- **A typed knowledge graph.** Trusted local page writes extract supported references without LLM calls when auto-linking is enabled. Remote `put_page` edges arrive later, via sweeps, maintenance or `add_link`. Ask "who works at acme-example?": walks are breadth-first, milliseconds on dense clusters ([how](docs/architecture/RETRIEVAL.md#breadth-first-graph-walks)). On BrainBench relationship questions, relationship retrieval lifts production **R@5 from 0.6626 to 0.7241** ([benchmark](docs/architecture/RETRIEVAL.md#the-benchmark)); 0.9791 is the `graph-oracle-parse` upper bound, not a product score.
-
-The point of building a 150K-page brain is to use it as a strategic moat. To never lose context. To query what's in your own head without re-reading it. The brain layer is what makes the moat usable. The 24/7 dream cycle is what keeps it sharp. Both run on your hardware, your DB, your keys.
-
-It's easier to ship a daemon that runs 24/7 to ingest, enrich, and consolidate than it is to keep an agent in chat working hard. GBrain is that daemon, generalized. Install in 30 minutes. Your agent does the work. As my personal agent gets smarter, so does yours.
-
-> **Start keyless.** Your harness subscription and any separately configured model API usage are different costs. The optional personal-agent bootstrap takes about 15 minutes; always-on enrichment needs its own compute and API configuration.
-
-Durable preferences and facts can be shared across agents; transient task and
-harness configuration state stay local. Configured cloud embedding, reranking,
-extraction, and synthesis providers can receive text, and the harness model sees
-recalled memory even in keyless mode. Markdown export is not a full database
-backup. Read [memory boundaries](docs/guides/memory-boundaries.md).
-
-> **LLMs:** fetch [`llms.txt`](llms.txt) for the documentation map, or [`llms-full.txt`](llms-full.txt) for the same map with core docs inlined in one fetch. **Agents:** start with [`AGENTS.md`](AGENTS.md) (or [`CLAUDE.md`](CLAUDE.md) if you're Claude Code).
-
-## What this looks like
-
-Say you have a meeting with Alice tomorrow. You want to walk in remembering what she works on, when you last talked, and what's still open between you. Here's what you'd type, and what you'd get back.
-
-**You ask:**
-
-> "What do I need to know before my meeting with Alice tomorrow?"
-
-**Most personal-knowledge tools give you back a list of pages.** Something like:
-
-```
-1. people/alice — Alice runs engineering at Acme...
-2. meetings/2026-03-15-alice-q1 — Q1 product review with Alice...
-3. meetings/2026-01-08-acme-kickoff — Kickoff meeting with Acme team...
-4. customers/acme — Acme is a series-B fintech we work with...
-5. notes/2026-04-22 — Quick chat with Alice about pricing...
-```
-
-Five pages you now have to open and read yourself to actually prepare. The tool found the right material, but it didn't do the work.
-
-**GBrain gives you back the answer, with sources:**
-
-```
-Alice runs engineering at Acme (a series-B fintech). You last spoke
-on April 22 in a quick pricing chat. Three things are still open
-from that conversation:
-
-1. She owes you the security review for the new tier
-   (deadline was May 1; no update since).
-2. You committed to pricing for a 500-seat tier
-   (you sent it April 25; no response yet).
-3. She mentioned they're hiring a CISO; you said you'd intro
-   someone from your network.
-
-Heads up: nothing's been added to the brain about Alice or Acme
-since April 22, six weeks ago. She may have replied through email
-or Slack DM, channels the brain doesn't see. Worth asking her to
-catch up before assuming any of this is still current.
-```
-
-Every claim has a source page behind it. The "heads up" at the end tells you what the brain doesn't know yet, so you can ask Alice about it directly instead of being surprised. The brain just did your meeting prep.
-
-This is the difference between a search engine and a brain. Search finds the pages. The brain reads them for you and writes the answer.
-
-## Install
+GBrain được cấp phép theo chuẩn mã nguồn mở MIT và hoàn toàn miễn phí tự lưu trữ (self-host); [gbrain.io](https://gbrain.io) là dịch vụ lưu trữ đám mây có trả phí tùy chọn.
 
 > [!TIP]
-> **Fastest: hosted GBrain at [gbrain.io](https://gbrain.io/cli?ref=readme), for any harness.** One command launches a GBrain hosted on gbrain.io; Claude Code, Codex, ChatGPT, Cursor and every other AI you use connect to it, with nothing to keep online.
+> **Cần bản lưu trữ sẵn (hosted)? Lần đầu sử dụng trợ lý AI?** Hãy trải nghiệm **[gbrain.io](https://gbrain.io/?ref=readme)** (bản GBrain đám mây) để có trải nghiệm dễ dàng nhất: một bộ não duy nhất cho bạn và đội ngũ của bạn, kết nối đồng thời với ChatGPT, Claude và Cursor, không cần cài đặt hay duy trì máy chủ trực tuyến. Bạn gặp khó khăn? Gửi email đến support@gbrain.io để được hỗ trợ thiết lập trực tiếp miễn phí.
+
+**Đặt kỹ năng song hành cùng tri thức.** Các bộ não cục bộ mới được tạo sẽ tích hợp sẵn các kỹ năng ghi nhớ ngay tại thư mục nội dung gốc. Các trợ lý AI có thể tham gia vào danh mục kỹ năng được ủy quyền; chỉ những biên tập viên được phê duyệt mới có quyền xuất bản. Các bản cài đặt dành cho coding agent sẽ bổ sung một bộ định tuyến cục bộ có quyền sở hữu; khởi động lại và xác minh sử dụng thực tế là các bước riêng biệt. Xem thêm tại [kỹ năng dùng chung cho bộ não (shared brain skills)](docs/guides/shared-brain-skills.md).
+
+## Chọn cách thiết lập của bạn
+
+1. **Thêm GBrain vào trợ lý AI hiện có của tôi — Khuyên dùng.** Giữ nguyên danh tính và môi trường của trợ lý AI bạn đang dùng. Không yêu cầu tạo mới tài khoản hay kho lưu trữ (repository) riêng tư. Bắt đầu với hướng dẫn dành cho **[Grok Bot](docs/guides/grok-bot.md)**, **[Muse](docs/guides/muse.md)**, hoặc **[Codex / Claude Code](docs/tutorials/connect-coding-agent.md)**. [Các nền tảng khác](#kết-nối-gbrain-với-ứng-dụng-ai-của-bạn-mcp).
+2. **Sử dụng bộ não trên máy tính cá nhân từ bất kỳ đâu.** Chỉ một dòng lệnh duy nhất để đưa bộ não lên mạng riêng Tailscale thông qua giao thức MCP và giữ nó luôn hoạt động: `gbrain mcp expose` (thêm `--funnel` cho các AI đám mây như Grok Bot, Muse và ChatGPT). Làm theo hướng dẫn **[dùng bộ não từ mọi nơi qua MCP](docs/guides/remote-mcp.md)**. **Nói với trợ lý của bạn:** *"use my brain over mcp"* — *"put my brain on tailscale"*.
+3. **Kết nối với bộ não đám mây sẵn có.** Làm theo hướng dẫn **[truy cập bộ não đám mây](docs/guides/hosted-harness-access.md)** để chọn kết nối OAuth nguyên bản hoặc kết nối máy chủ nội bộ. Để đăng nhập trang quản trị, quản lý client và phân quyền, xem **[quản trị MCP](docs/mcp/ADMIN.md)** bằng thông tin xác thực quản trị viên riêng biệt.
+
+Grok **Bot** và Grok **Build** là hai sản phẩm khác nhau. Trợ lý cá nhân của Muse và **Muse Code** cũng là hai sản phẩm riêng biệt. Muse đã có sẵn bộ nhớ cục bộ có thể chỉnh sửa; GBrain bổ sung thêm bản ghi rõ ràng, di động kèm nguồn gốc xác thực và khả năng chia sẻ. Xem các hướng dẫn chi tiết để biết bằng chứng kiểm thử và các bước xác minh.
+
+---
+
+Tôi là Garry Tan, Chủ tịch & CEO của Y Combinator. Tôi xây dựng GBrain để vận hành các trợ lý AI của chính mình. Đây là bộ não thực chiến đứng sau các triển khai OpenClaw và Hermes của tôi: **155.795 trang tài liệu, 24.589 người, 5.340 công ty**, cùng 66 tác vụ nền (cron job) chạy hoàn toàn tự động. Trợ lý của tôi tiếp nhận các cuộc họp, email, tweet, cuộc gọi thoại và các ý tưởng mới ngay cả khi tôi đang ngủ. Nó làm giàu thông tin về mỗi cá nhân và công ty nó bắt gặp, tự sửa các trích dẫn và củng cố trí nhớ qua đêm. Tôi thức dậy thông thái hơn lúc đi ngủ — và bạn cũng sẽ như vậy.
+
+**GBrain cũng hoạt động như một bộ não dùng chung cho doanh nghiệp.** Các client từ xa đã xác thực sẽ bị giới hạn theo nguồn (source) và quyền thao tác, kết hợp với các bộ lọc hiển thị. Tập tin cục bộ và thông tin đăng nhập cơ sở dữ liệu dùng chung là một ranh giới bảo mật riêng biệt: chỉ riêng nguồn dữ liệu không cô lập được những người gọi đó. Đọc kỹ [ranh giới chia sẻ](docs/architecture/brains-and-sources.md#what-confines-remote-callers-and-what-does-not) và [hướng dẫn bộ não doanh nghiệp](docs/tutorials/company-brain.md) trước khi thiết lập quyền truy cập chung.
+
+Bên cạnh việc truy xuất bằng từ khóa và ngữ nghĩa, GBrain cung cấp hai cách tùy chọn để khai thác kho tri thức đã lưu:
+
+- **Một tầng tổng hợp mang lại câu trả lời thực tế.** Câu trả lời bằng văn xuôi tổng hợp, có trích dẫn rõ ràng xuyên suốt về con người, công ty, thương vụ và ý tưởng. Không phải kiểu "đây là 10 đoạn văn có chứa từ khóa của bạn", mà là một câu trả lời thực sự kèm nguồn trích dẫn và ghi chú rõ ràng về những gì bộ não **chưa biết**. Phân tích lỗ hổng thông tin (gap analysis) chính là yếu tố làm thay đổi hoàn toàn cách bạn sử dụng bộ não.
+- **Một đồ thị tri thức có định kiểu (Typed Knowledge Graph).** Khi ghi trang cục bộ đáng tin cậy, hệ thống sẽ tự trích xuất các liên kết tham chiếu mà không cần gọi mô hình ngôn ngữ (LLM) nếu tính năng auto-linking được bật. Các liên kết từ xa qua `put_page` sẽ được cập nhật sau thông qua các lượt quét nền, bảo trì hoặc lệnh `add_link`. Khi hỏi "Ai đang làm việc tại acme-example?", đồ thị duyệt theo chiều rộng (breadth-first) chỉ mất vài mili-giây ngay cả trên các cụm liên kết dày đặc ([chi tiết kỹ thuật](docs/architecture/RETRIEVAL.md#breadth-first-graph-walks)). Trên bộ câu hỏi quan hệ BrainBench, việc truy xuất theo đồ thị giúp nâng chỉ số **R@5 từ 0.6626 lên 0.7241** ([benchmark](docs/architecture/RETRIEVAL.md#the-benchmark)).
+
+Mục đích của việc xây dựng một bộ não 150.000 trang là tạo ra một "hào lũy chiến lược" (strategic moat). Bạn sẽ không bao giờ đánh mất ngữ cảnh. Bạn có thể truy vấn mọi thứ nằm trong đầu mình mà không cần đọc lại từ đầu. Tầng não bộ làm cho hào lũy này phát huy tác dụng. Chu kỳ "giấc mơ" 24/7 (dream cycle) giữ cho nó luôn sắc bén. Cả hai đều chạy trên phần cứng của bạn, cơ sở dữ liệu của bạn, và API key của chính bạn.
+
+Việc chạy một dịch vụ nền (daemon) 24/7 để tiếp nhận, làm giàu và củng cố dữ liệu dễ dàng hơn nhiều so với việc bắt một trợ lý trò chuyện phải liên tục làm việc. GBrain chính là tiến trình nền đó được tổng quát hóa. Cài đặt trong 30 phút. Trợ lý của bạn làm phần việc còn lại. Khi trợ lý cá nhân của tôi thông minh hơn, trợ lý của bạn cũng vậy.
+
+> **Bắt đầu không cần API key (Keyless).** Chi phí thuê bao trợ lý AI và chi phí gọi API mô hình bên ngoài là hai khoản riêng biệt. Việc khởi tạo trợ lý cá nhân tùy chọn mất khoảng 15 phút; tính năng làm giàu dữ liệu tự động 24/7 sẽ cần tài nguyên tính toán và khóa API riêng.
+
+Các tùy chọn và sự kiện dài hạn có thể được chia sẻ giữa các trợ lý; trạng thái công việc tạm thời và cấu hình nền tảng sẽ được giữ cục bộ. Các nhà cung cấp đám mây về embedding, reranking, trích xuất và tổng hợp có thể nhận văn bản, và mô hình của trợ lý vẫn xem được ký ức đã nhớ lại ngay cả ở chế độ không dùng key. Xuất Markdown không thay thế cho bản sao lưu cơ sở dữ liệu hoàn chỉnh. Vui lòng đọc thêm [ranh giới bộ nhớ](docs/guides/memory-boundaries.md).
+
+> **Dành cho LLM:** tải [`llms.txt`](llms.txt) để xem bản đồ tài liệu, hoặc [`llms-full.txt`](llms-full.txt) để xem toàn bộ tài liệu cốt lõi gộp trong một file. **Dành cho Agent:** bắt đầu với [`AGENTS.md`](AGENTS.md) (hoặc [`CLAUDE.md`](CLAUDE.md) nếu bạn dùng Claude Code).
+
+---
+
+## Trải nghiệm thực tế trông như thế nào?
+
+Giả sử ngày mai bạn có một cuộc họp với Alice. Bạn muốn bước vào phòng họp và nhớ rõ cô ấy phụ trách mảng nào, lần gần nhất hai bên nói chuyện là khi nào, và có việc gì còn đang dang dở. Đây là những gì bạn gõ, và kết quả bạn nhận lại:
+
+**Bạn hỏi:**
+
+> "Tôi cần biết những gì trước cuộc họp với Alice vào ngày mai?"
+
+**Hầu hết các công cụ quản lý tri thức cá nhân sẽ trả về một danh sách các trang tài liệu:** Kiểu như:
+
+```text
+1. people/alice — Alice phụ trách kỹ thuật tại Acme...
+2. meetings/2026-03-15-alice-q1 — Đánh giá sản phẩm Q1 với Alice...
+3. meetings/2026-01-08-acme-kickoff — Cuộc họp khởi động dự án với đội ngũ Acme...
+4. customers/acme — Acme là công ty fintech vòng Series B mà chúng ta đang hợp tác...
+5. notes/2026-04-22 — Trò chuyện nhanh với Alice về bảng giá...
+```
+
+Năm trang tài liệu mà bây giờ bạn phải tự bấm vào đọc từng trang để chuẩn bị. Công cụ tìm đúng tài liệu, nhưng nó không làm việc giúp bạn.
+
+**GBrain trả về câu trả lời trực tiếp kèm nguồn dẫn:**
+
+```text
+Alice phụ trách kỹ thuật tại Acme (một công ty fintech vòng Series B). Lần gần nhất hai bên 
+trao đổi là vào ngày 22 tháng 4 trong một cuộc gọi ngắn về bảng giá. Có 3 vấn đề vẫn 
+đang chờ xử lý từ cuộc trò chuyện đó:
+
+1. Alice nợ bạn bản đánh giá bảo mật cho gói dịch vụ mới 
+   (hạn chót là ngày 1 tháng 5; chưa thấy cập nhật gì thêm).
+2. Bạn đã cam kết gửi bảng giá cho gói 500 người dùng 
+   (bạn đã gửi vào ngày 25 tháng 4; chưa thấy phản hồi).
+3. Alice có nhắc họ đang tuyển Giám đốc An ninh thông tin (CISO); bạn nói sẽ giới thiệu 
+   ứng viên phù hợp trong mạng lưới của bạn.
+
+Lưu ý: Không có thông tin mới nào về Alice hay Acme được đưa vào bộ não kể từ ngày 22 tháng 4, 
+tức 6 tuần trước. Có thể cô ấy đã trả lời qua email hoặc tin nhắn Slack riêng — các kênh 
+mà bộ não chưa được kết nối tới. Bạn nên chủ động hỏi Alice để cập nhật tình hình trước 
+khi coi những thông tin này vẫn còn hiệu lực.
+```
+
+Mỗi luận điểm đều có trang tài liệu gốc đứng sau. Phần "Lưu ý" ở cuối cho bạn biết những gì bộ não **chưa biết**, giúp bạn chủ động hỏi Alice thay vì bị bất ngờ. Bộ não vừa chuẩn bị xong cuộc họp cho bạn.
+
+Đó là sự khác biệt giữa một **công cụ tìm kiếm** và một **bộ não**. Tìm kiếm chỉ đưa ra tài liệu. Bộ não đọc chúng thay bạn và viết ra câu trả lời.
+
+---
+
+## Cài đặt
+
+> [!TIP]
+> **Nhanh nhất: Dùng bản lưu trữ sẵn tại [gbrain.io](https://gbrain.io/cli?ref=readme) cho mọi nền tảng.** Chỉ cần một lệnh để khởi chạy GBrain đám mây trên gbrain.io; Claude Code, Codex, ChatGPT, Cursor và mọi AI khác đều có thể kết nối tới mà không cần bạn phải duy trì máy chủ trực tuyến.
 >
 > ```bash
 > curl -sSL https://gbrainio.terminalwire.sh | bash
-> gbrainio terminal connect      # in a new terminal
-> gbrainio workspace new         # pick a plan in the browser
-> curl -fsSL https://bun.sh/install | bash   # skip if Bun 1.4.4+ is installed
+> gbrainio terminal connect      # mở trong một terminal mới
+> gbrainio workspace new         # chọn gói dịch vụ trên trình duyệt
+> curl -fsSL https://bun.sh/install | bash   # bỏ qua nếu đã cài Bun 1.4.4+
 > export PATH="$HOME/.bun/bin:$PATH"
-> bun install -g github:garrytan/gbrain#stable   # the gbrain CLI only; no local brain
-> # Claude Code (an existing gbrain entry is kept):
+> bun install -g github:garrytan/gbrain#stable   # chỉ cài CLI gbrain; không chạy brain cục bộ
+> # Dành cho Claude Code (giữ lại cấu hình gbrain cũ nếu có):
 > (claude mcp get gbrain >/dev/null 2>&1 || claude mcp add --transport http --scope user gbrain https://gbrain.io/mcp) && gbrain setup claude-code --instructions-only
-> # Codex (an existing gbrain entry is kept):
+> # Dành cho Codex (giữ lại cấu hình gbrain cũ nếu có):
 > (codex mcp get gbrain >/dev/null 2>&1 || codex mcp add gbrain --url https://gbrain.io/mcp) && gbrain setup codex --instructions-only
 > ```
 >
-> `gbrain setup <harness> --instructions-only` tells the agent the brain is there; agents seldom call an MCP server nobody told them about. It writes the [brain-first block](docs/guides/setup.md#brain-first-instructions) into `~/.claude/CLAUDE.md` or Codex's `AGENTS.md` (a non-empty `AGENTS.override.md` instead when Codex has one) with a per-turn rule hook, and leaves the MCP entry alone; the same command with `--no-instructions` added takes them out.
+> Lệnh `gbrain setup <harness> --instructions-only` sẽ thông báo cho AI biết có sự hiện diện của bộ não (các agent hiếm khi tự gọi máy chủ MCP nếu không được dặn trước). Lệnh này sẽ ghi khối hướng dẫn ưu tiên não bộ ([brain-first block](docs/guides/setup.md#brain-first-instructions)) vào `~/.claude/CLAUDE.md` hoặc `AGENTS.md` của Codex và giữ nguyên cấu hình MCP.
 >
-> The installer is a shell script for macOS and Linux; read it before you run it.
+> Bản cài đặt là một shell script dành cho macOS và Linux; bạn nên đọc trước khi chạy.
 
-### Here's how to self-host it
+### Tự lưu trữ (Self-host) trên máy của bạn
 
-GBrain is MIT-licensed and free to self-host. It needs **Bun 1.4.4 or newer**; existing worker installs read the [authorization and queue upgrade guide](docs/guides/authorization-upgrade.md) before restarting on this version.
+GBrain được cấp phép mã nguồn mở theo chuẩn MIT và hoàn toàn miễn phí tự lưu trữ. Yêu cầu **Bun 1.4.4 trở lên**.
 
 > [!WARNING]
-> **GBrain is NOT distributed on npm.** The npm `gbrain` package is unrelated and
-> can shadow the real binary, so never run `npm install -g gbrain` or
-> `bun add -g gbrain`. Install only via `bun install -g github:garrytan/gbrain#stable`
-> (the soaked stable channel; `#latest-stable` is the alpha line with every release)
-> or `git clone --branch stable` + `bun install && bun link`. Installed by mistake? `gbrain doctor` gives the fix.
-> Schema not migrated ([#218](https://github.com/garrytan/gbrain/issues/218))? Run
-> `gbrain apply-migrations --yes --no-autopilot-install`; if it exits 1, run `gbrain doctor --json`, not another `--yes` (`wedged`: relay its fix).
+> **GBrain KHÔNG phát hành qua npm.** Gói `gbrain` trên npm là một dự án hoàn toàn khác và có thể làm xung đột với tệp thực thi chính thức. Tuyệt đối không chạy `npm install -g gbrain` hoặc `bun add -g gbrain`. Chỉ cài đặt thông qua `bun install -g github:garrytan/gbrain#stable` hoặc `git clone --branch stable` + `bun install && bun link`. Cài nhầm? Chạy `gbrain doctor` để nhận hướng dẫn sửa.
 
 ```bash
 bun install -g github:garrytan/gbrain#stable
-gbrain setup claude-code              # or: gbrain setup codex
-gbrain init --pglite --no-embedding   # any other harness, or no agent
+gbrain setup claude-code              # hoặc: gbrain setup codex
+gbrain init --pglite --no-embedding   # dành cho các nền tảng khác, hoặc chạy độc lập
 ```
 
-`gbrain setup` shows what it will write first (`--dry-run` previews, `--remove` undoes), creates a keyless brain only if none exists, wires MCP, hooks and a brain-first block in the agent's instruction file (`--no-instructions` skips it), and smoke-tests them ([setup guide](docs/guides/setup.md)). For any other coding agent, paste:
+Lệnh `gbrain setup` sẽ hiển thị trước những gì nó sắp ghi (`--dry-run` để xem trước, `--remove` để hoàn tác), tạo bộ não không cần key nếu chưa có, kết nối giao thức MCP, thiết lập hook và khối hướng dẫn ưu tiên bộ não cho trợ lý ([hướng dẫn thiết lập chi tiết](docs/guides/setup.md)). Với bất kỳ coding agent nào khác, bạn chỉ cần gửi lời nhắc:
 
 ```text
 Add GBrain memory to this existing agent. Read and follow:
@@ -138,22 +130,22 @@ Keep my current identity and instructions, start keyless, and show me the
 search-mode choice. Verify a remember/recall round trip with real GBrain calls.
 ```
 
-Postgres, thin clients, API keys and upgrades: [docs/INSTALL.md](docs/INSTALL.md). Agents: [INSTALL_FOR_AGENTS.md](INSTALL_FOR_AGENTS.md). Memory-only walkthrough: [give your coding agent a memory](docs/tutorials/connect-coding-agent.md).
+Cấu hình Postgres, thin client, khóa API và nâng cấp: xem [docs/INSTALL.md](docs/INSTALL.md). Dành cho Agent: [INSTALL_FOR_AGENTS.md](INSTALL_FOR_AGENTS.md).
 
-### CLI standalone (no agent)
+### Chạy CLI độc lập (Không cần trợ lý AI)
 
 ```bash
-gbrain init --pglite --no-embedding   # keyless; no server, no Docker
-gbrain import ~/notes/ --no-embed     # index your markdown
-gbrain search "a phrase from a note" --json
-gbrain doctor                         # verify health
+gbrain init --pglite --no-embedding   # không cần key, không cần server, không cần Docker
+gbrain import ~/notes/ --no-embed     # đánh chỉ mục thư mục ghi chú markdown của bạn
+gbrain search "một cụm từ trong ghi chú" --json
+gbrain doctor                         # kiểm tra tình trạng sức khỏe hệ thống
 ```
 
-### Optional: a new personal agent
+### Tùy chọn: Khởi tạo một trợ lý cá nhân mới
 
-To have GBrain create a **new persistent personal agent** with identity files and its own private GitHub repo, open Codex (CLI or ChatGPT desktop) or Claude Code in a new, empty folder and paste:
+Để GBrain tạo một **trợ lý cá nhân lâu dài mới** với đầy đủ tệp định danh và kho lưu trữ GitHub riêng tư, hãy mở Codex hoặc Claude Code trong một thư mục trống mới và nhập:
 
-```
+```text
 Read and follow every step of:
 https://raw.githubusercontent.com/garrytan/gbrain/stable/BOOTSTRAP_FOR_AGENTS.md
 Goal: set yourself up as my persistent personal agent in this folder, with gbrain
@@ -162,218 +154,178 @@ answers. Ask before anything destructive. You are not done until
 `gbrain bootstrap verify` exits 0.
 ```
 
-The repo is not a complete backup; see the [bootstrap guide](docs/guides/bootstrap.md). For the always-on version (24/7 ingestion and the overnight dream cycle on a server with 8GB+ RAM and its own API usage), run GBrain under [OpenClaw](https://github.com/openclaw/openclaw) or [Hermes](https://github.com/NousResearch/hermes-agent) and point it at `INSTALL_FOR_AGENTS.md`; the [personal-brain tutorial](docs/tutorials/personal-brain.md) walks it end to end.
+Xem thêm [hướng dẫn bootstrap](docs/guides/bootstrap.md). Đối với phiên bản chạy liên tục 24/7 (vừa tiếp nhận dữ liệu vừa thực hiện chu kỳ giấc mơ qua đêm trên máy chủ RAM 8GB+), hãy chạy GBrain dưới nền tảng [OpenClaw](https://github.com/openclaw/openclaw) hoặc [Hermes](https://github.com/NousResearch/hermes-agent) và đọc kỹ [hướng dẫn bộ não cá nhân](docs/tutorials/personal-brain.md).
 
-### Connect GBrain to your AI client (MCP)
+### Kết nối GBrain với ứng dụng AI của bạn (MCP)
 
-- **Local stdio client:** `gbrain setup claude-code` or `gbrain setup codex` registers `gbrain serve` (lists the memory verbs; `--surface full` lists every tool) behind gbrain's launcher, so a session opened in a cloned repository never loads that repository's `bunfig.toml` or `.env`, and adds the brain-first instructions: agents seldom call a brain nobody told them about. Cursor, Windsurf and other stdio clients take `"$(command -v gbrain)" serve --surface starter --advertise verbs`.
-- **Plugins with curated skills:** Codex `codex plugin marketplace add garrytan/gbrain@codex-plugin` + `codex plugin add gbrain@gbrain`; Claude Code `/plugin marketplace add garrytan/gbrain` + `/plugin install gbrain@gbrain`.
-- **This brain from anywhere:** `gbrain mcp expose` publishes it on your Tailscale tailnet as a user service (`--funnel` for cloud agents such as Grok Bot, Muse and ChatGPT). [Guide](docs/guides/remote-mcp.md).
-- **A brain on another host:** `gbrain connect https://your-host/mcp --token gbrain_xxx --install` (add `--agent codex` for Codex). Hosted brains use [native OAuth or a private handoff](docs/guides/hosted-harness-access.md); dashboard, clients and permissions live in [MCP administration](docs/mcp/ADMIN.md).
+- **Client chạy stdio cục bộ:** `gbrain setup claude-code` hoặc `gbrain setup codex` sẽ đăng ký dịch vụ `gbrain serve`. Các client khác như Cursor, Windsurf sử dụng cú pháp: `"$(command -v gbrain)" serve --surface starter --advertise verbs`.
+- **Plugin tích hợp sẵn kỹ năng:** Codex dùng `codex plugin marketplace add garrytan/gbrain@codex-plugin` + `codex plugin add gbrain@gbrain`; Claude Code dùng `/plugin marketplace add garrytan/gbrain` + `/plugin install gbrain@gbrain`.
+- **Truy cập bộ não từ mọi nơi:** `gbrain mcp expose` để chia sẻ qua mạng Tailscale (`--funnel` dành cho các AI đám mây như Grok Bot, Muse và ChatGPT). [Xem hướng dẫn](docs/guides/remote-mcp.md).
+- **Kết nối tới bộ não trên máy chủ khác:** `gbrain connect https://your-host/mcp --token gbrain_xxx --install`.
 
-Per-client guides: [Claude Code](docs/mcp/CLAUDE_CODE.md) · [Codex](docs/mcp/CODEX.md) · [ChatGPT](docs/mcp/CHATGPT.md) · [Claude Desktop](docs/mcp/CLAUDE_DESKTOP.md) · [Claude Cowork](docs/mcp/CLAUDE_COWORK.md) · [Perplexity](docs/mcp/PERPLEXITY.md) · [Hermes](docs/mcp/HERMES.md) · [OpenClaw](docs/mcp/OPENCLAW.md) · [opencode](docs/mcp/OPENCODE.md) · [Grok Build](docs/mcp/GROK.md) · [Grok Bot](docs/guides/grok-bot.md) · [Muse](docs/guides/muse.md) · [everything MCP](docs/mcp/README.md).
+Hướng dẫn riêng cho từng ứng dụng: [Claude Code](docs/mcp/CLAUDE_CODE.md) · [Codex](docs/mcp/CODEX.md) · [ChatGPT](docs/mcp/CHATGPT.md) · [Claude Desktop](docs/mcp/CLAUDE_DESKTOP.md) · [Claude Cowork](docs/mcp/CLAUDE_COWORK.md) · [Perplexity](docs/mcp/PERPLEXITY.md) · [Hermes](docs/mcp/HERMES.md) · [OpenClaw](docs/mcp/OPENCLAW.md) · [opencode](docs/mcp/OPENCODE.md) · [Grok Build](docs/mcp/GROK.md) · [Grok Bot](docs/guides/grok-bot.md) · [Muse](docs/guides/muse.md) · [Tất cả về MCP](docs/mcp/README.md).
 
-## Two ways to query your brain
+---
 
-Raw retrieval (what most personal-knowledge tools ship) and a synthesis layer that gives you an actual answer. They serve different jobs.
+## Hai cách truy vấn bộ não của bạn
 
-```bash
-# raw retrieval: top pages by hybrid score, no answer-generation call
-gbrain search "who's working on AI agents at portfolio companies?"
-
-# brain layer: synthesized answer with citations and gap analysis
-gbrain think "who's working on AI agents at portfolio companies?"
-```
-
-**`gbrain search`** returns the top retrieved pages, ranked by hybrid scoring (vector + keyword + RRF + source-tier boost + reranker). Use it when you want raw material to skim: agent context windows, citation lookups, finding a specific quote.
-
-Configured embedding and reranking providers can still receive text and charge
-for retrieval. Keyless keyword search needs no model API; synthesis requires a
-configured chat capability. See [memory boundaries](docs/guides/memory-boundaries.md#where-text-goes).
-
-Search also tells you when its results are incomplete because projections are
-still rebuilding or a bounded vector scan ran short. Ask your agent *"Check
-whether my search index is ready"*; see [search readiness and recovery](docs/architecture/RETRIEVAL.md#chunk-rebuilds-after-upgrading)
-before treating an empty result as proof that a page is missing.
-
-**`gbrain think`** runs the same retrieval, then composes a synthesized answer across the results with explicit citations to the source pages AND an honest note on what the brain doesn't know yet. The gap analysis is the differentiator: the answer tells you when a page is stale, when a claim is uncited, when two pages contradict each other, when there's a hole you should fill.
-
-**Say to your agent:** *"What do we know about acme-example?"* — *"Tell me about alice-example before my meeting tomorrow"* — *"Search for who's working on AI agents."* Your agent routes these to the brain automatically; you never type the commands yourself.
-
-**Why it compounds.** Pair the brain layer with `find_trajectory` and you get answers like *"how have the company's metrics changed AND what does the team look like right now AND what did they promise / share AND when did we last meet AND what's the value-add I can offer here"*: well-scored, well-cited, in one shot. That's the strategic moat. That's why building a 150K-page brain is worth the effort.
-
-`gbrain agent run "..."` exposes the same surface to a sub-agent through the Minions queue, with crash-safe two-phase persistence. Same answers, durable.
-
-## How to get data in
-
-Start with an explicit fact or a notes folder; opt into connectors, capture, and enrichment separately.
-
-**Already have a company knowledge repository?** Say to your agent: *“Connect our
-existing company brain, preserve its files, and show me the import plan first.”*
-Try `gbrain sources demo company-brain` without keys or private data, then inspect
-your committed Markdown with `gbrain sources inspect <path> --profile company-brain`.
-The [company-brain ingestion guide](docs/guides/company-brain-ingestion.md) covers
-explicit destination approval, typed relationships, and resumable verification.
-It does not enable embeddings, sharing, schedules, or curation automatically.
-
-**Say to your agent:** *"Remember this with its source"* — *"What should I import first?"*
-
-[Data ingestion guide](docs/guides/data-ingestion.md) covers files, conversations, connectors, Google data, and capture commands.
-
-## Your brain's shape (schema packs)
-
-Most personal-knowledge tools force one fixed layout: their idea of "notes" + "people" + "tags." Drop a Notion export or your own years-old Obsidian vault on top, and the agent doesn't know what a `Projects/` folder means or whether `Reading/` is people or sources.
-
-**gbrain doesn't have a fixed layout.** It ships with bundled schema packs and lets you author your own when none fit:
-
-- **`gbrain-base-v2`** (default) — 15-type DRY/MECE canonical taxonomy (14 canonical + `note` catch-all): `person`, `company`, `media`, `tweet`, `social-digest`, `analysis`, `atom`, `concept`, `source`, `deal`, `email`, `slack`, `writing`, `project`, `note`. Subtypes/format/origin pushed to frontmatter.
-- **`gbrain-base`** (legacy) — the wider 24-type layout. Stays bundled for back-compat; brains on it can upgrade via `gbrain onboard --check --explain` → `gbrain jobs submit unify-types --params '{"target_pack":"gbrain-base-v2","apply":true}'` (omit `"apply":true` for a dry-run preview — that is the default).
-- **`gbrain-recommended`** — extends `gbrain-base` with the 13 additional directories from `docs/GBRAIN_RECOMMENDED_SCHEMA.md` (source, place, trip, conversation, personal, civic, project, etc.). Activate with `gbrain schema use gbrain-recommended`.
-- **Your own pack** — `gbrain schema detect` clusters your actual filesystem into proposed types, `gbrain schema suggest` runs an LLM pass over them, and `gbrain schema review-candidates --apply` promotes the ones you like. Three commands and the brain knows your shape. Authoring a successor pack (declares `migration_from:` so existing brains can opt in): see [`docs/architecture/pack-upgrade-mechanism.md`](docs/architecture/pack-upgrade-mechanism.md).
+Truy xuất thô (như đa số các công cụ tri thức hiện nay) và tầng tổng hợp mang lại câu trả lời thực sự. Chúng phục vụ hai mục đích khác nhau:
 
 ```bash
-gbrain schema active                # which pack is running, which tier set it
-gbrain schema list                  # bundled + installed packs
-gbrain schema detect                # propose types matching your filesystem
-gbrain schema suggest               # LLM-refined proposals on top of detect
-gbrain schema review-candidates     # human gate: promote / rename / ignore
-gbrain schema use my-pack           # activate
+# Truy xuất thô: Trả về danh sách trang khớp nhất theo điểm số lai (hybrid), không gọi LLM để viết câu trả lời
+gbrain search "ai đang làm về AI agent ở các công ty trong danh mục đầu tư?"
+
+# Tầng tổng hợp: Câu trả lời hoàn chỉnh kèm trích dẫn nguồn và phân tích lỗ hổng thông tin
+gbrain think "ai đang làm về AI agent ở các công ty trong danh mục đầu tư?"
 ```
 
-**Say to your agent:** *"My schema isn't matching my notes — propose new types from my corpus"* — *"Add a page type for lab results to my brain's schema."* The schema-author skill runs the detect → suggest → review flow for you.
+* **`gbrain search`**: Trả về các trang phù hợp nhất, xếp hạng bằng thuật toán kết hợp (vector + từ khóa + RRF + tăng cường theo nguồn + reranker). Dùng khi bạn cần tài liệu thô để đọc lướt, cấp ngữ cảnh cho AI, hoặc tra cứu trích dẫn.
+* **`gbrain think`**: Thực hiện tìm kiếm tương tự, sau đó tự tổng hợp thành câu trả lời văn xuôi hoàn chỉnh kèm nguồn dẫn và chỉ ra rõ ràng những gì bộ não **chưa biết**. Khả năng phân tích khoảng trống thông tin chính là điểm khác biệt lớn nhất: câu trả lời sẽ cho bạn biết khi nào một tài liệu đã cũ, khi nào một thông tin chưa có nguồn, hoặc khi nào hai tài liệu mâu thuẫn với nhau.
 
-The active pack threads through every read + write path: `parseMarkdown` infers page type from the pack's path prefixes; `whoknows` scopes expert routing to types declared `expert_routing: true`; `extract_facts` runs only on `extractable: true` types. The retained search-cache key includes the pack name + version, but semantic result reuse is temporarily disabled. Switch packs and the brain re-interprets itself; switch back and nothing's lost.
+**Bạn có thể nói với trợ lý AI của mình:** *"Chúng ta biết gì về acme-example?"* — *"Hãy tóm tắt về alice-example trước cuộc họp ngày mai"* — *"Tìm xem ai đang làm về AI agents."* Trợ lý sẽ tự động điều hướng các câu hỏi này tới bộ não; bạn không cần tự tay gõ lệnh.
 
-Seven-tier resolution chain (per-call flag → env var → per-source DB key → brain-wide DB key → `gbrain.yml` → `~/.gbrain/config.json` → `gbrain-base` default). Full reference + authoring guide: [`docs/architecture/schema-packs.md`](docs/architecture/schema-packs.md).
+---
 
-## Tutorials
+## Cách đưa dữ liệu vào bộ não
 
-Step-by-step walkthroughs for getting the most out of GBrain. Each one takes you from zero to a working outcome, with concrete commands and real numbers.
+Bắt đầu bằng một dữ kiện cụ thể hoặc một thư mục ghi chú; sau đó tùy chọn kích hoạt kết nối tự động, thu thập và làm giàu dữ liệu sau.
 
-- [**Set up your personal AI agent + brain from zero**](docs/tutorials/personal-brain.md) — the canonical full-stack install. Two GitHub repos, a Telegram bot, AlphaClaw on Render, OpenClaw + GBrain + Supabase. End-to-end in about 2 hours.
-- [**Set up GBrain as your company brain**](docs/tutorials/company-brain.md) — federated, multi-user, OAuth-scoped institutional memory for a 10-50 person team. About 90 minutes end-to-end.
-- [**Auto-improve a skill with `gbrain skillopt`**](docs/tutorials/improving-skills-with-skillopt.md) — treat a `SKILL.md` as a trainable parameter. Generate a starter benchmark straight from the skill with `--bootstrap-from-skill` (or write your own), strengthen the judges, then watch the optimizer propose edits and keep only the ones that measurably score higher. ~20 minutes, ~$1 in API calls. Flag + cost + safety reference: [`docs/guides/skillopt.md`](docs/guides/skillopt.md).
+**Bạn đã có sẵn một kho tri thức công ty?** Hãy nói với trợ lý AI: *“Kết nối bộ não công ty sẵn có của chúng ta, giữ nguyên các tập tin, và hiển thị kế hoạch nhập dữ liệu trước.”* Bạn có thể thử nghiệm với `gbrain sources demo company-brain` mà không cần key hay dữ liệu riêng tư. Xem [hướng dẫn nạp dữ liệu công ty](docs/guides/company-brain-ingestion.md).
 
-More walkthroughs in progress: connecting an existing agent (Claude Code, Cursor, OpenClaw, Hermes) to a GBrain memory layer; setting up GBrain for VC dealflow with founder scorecards and meeting prep; migrating an existing Notion or Obsidian vault; indexing a codebase as a queryable code brain. Full tutorial index: [`docs/tutorials/`](docs/tutorials/).
+**Nói với trợ lý của bạn:** *"Ghi nhớ điều này kèm nguồn trích dẫn"* — *"Tôi nên nhập tài liệu nào vào trước?"*
 
-Want to see a tutorial that isn't here yet? [Open an issue](https://github.com/garrytan/gbrain/issues) describing the workflow you want documented.
+Xem chi tiết tại [hướng dẫn nạp dữ liệu](docs/guides/data-ingestion.md) (bao gồm tệp tin, đoạn chat, kết nối dữ liệu Google và các lệnh thu thập).
 
-## What it does (the loop)
+---
 
+## Cấu trúc hình thái bộ não (Schema packs)
+
+Hầu hết các công cụ tri thức ép bạn vào một khuôn mẫu cố định: "ghi chú" + "con người" + "thẻ tag". Khi bạn đưa dữ liệu từ Notion hoặc kho Obsidian nhiều năm tuổi vào, AI sẽ lúng túng không hiểu thư mục `Projects/` là gì, hay `Reading/` là người hay là nguồn tài liệu.
+
+**GBrain không áp đặt một cấu trúc cứng nhắc.** Nó đi kèm các bộ mẫu cấu trúc (schema packs) sẵn có và cho phép bạn tự định nghĩa bộ mẫu của riêng mình:
+
+- **`gbrain-base-v2`** (Mặc định) — Phân loại chuẩn 15 loại tài liệu rõ ràng, không trùng lặp: `person` (người), `company` (công ty), `media`, `tweet`, `social-digest`, `analysis`, `atom`, `concept`, `source`, `deal` (thương vụ), `email`, `slack`, `writing`, `project`, và `note` (ghi chú chung).
+- **`gbrain-base`** (Cũ) — Cấu trúc rộng hơn gồm 24 loại tài liệu. Được giữ lại để tương thích ngược.
+- **`gbrain-recommended`** — Mở rộng từ `gbrain-base` với thêm 13 thư mục chuyên biệt (địa điểm, chuyến đi, hội thoại, cá nhân, dự án...).
+- **Gói riêng của bạn** — Lệnh `gbrain schema detect` sẽ quét cấu trúc thư mục thực tế của bạn để đề xuất loại tài liệu phù hợp, `gbrain schema suggest` dùng AI tinh chỉnh đề xuất, và `gbrain schema review-candidates --apply` để bạn phê duyệt các loại bạn muốn dùng.
+
+```bash
+gbrain schema active                # xem gói schema nào đang chạy
+gbrain schema list                  # danh sách các gói có sẵn và đã cài
+gbrain schema detect                # tự động đề xuất loại tài liệu theo thư mục của bạn
+gbrain schema suggest               # AI gợi ý tinh chỉnh thêm
+gbrain schema review-candidates     # con người duyệt: chấp nhận / đổi tên / bỏ qua
+gbrain schema use my-pack           # kích hoạt gói của bạn
 ```
-  signal   →   search   →   respond   →   write   →   auto-link   →   sync
-  (every    (brain-first  (informed     (page +    (typed edges     (cron
-  message)  retrieval)    by context)   timeline)  + backlinks)     keeps fresh)
+
+---
+
+## Hướng dẫn thực hành (Tutorials)
+
+Các bài hướng dẫn từng bước từ số 0 đến khi hoàn thiện:
+
+- [**Thiết lập trợ lý AI cá nhân + bộ não từ đầu**](docs/tutorials/personal-brain.md) — Bản cài đặt chuẩn hoàn chỉnh: 2 kho GitHub, bot Telegram, OpenClaw + GBrain + Supabase. Hoàn thành trong khoảng 2 giờ.
+- [**Thiết lập GBrain làm bộ não cho công ty**](docs/tutorials/company-brain.md) — Bộ nhớ tổ chức dùng chung, đa người dùng, phân quyền OAuth cho nhóm 10–50 người. Hoàn thành trong khoảng 90 phút.
+- [**Tự động nâng cấp kỹ năng với `gbrain skillopt`**](docs/tutorials/improving-skills-with-skillopt.md) — Tinh chỉnh tệp `SKILL.md` như một tham số huấn luyện, tự động đo lường và cải thiện chất lượng kỹ năng.
+
+Xem toàn bộ danh mục tại: [`docs/tutorials/`](docs/tutorials/).
+
+---
+
+## Vòng lặp vận hành (The loop)
+
+```text
+  Tín hiệu   →   Tìm kiếm    →   Phản hồi    →     Ghi nhớ    →   Liên kết tự động  →  Đồng bộ
+(Mỗi tin nhắn) (Ưu tiên não bộ) (Dựa trên ngữ cảnh) (Trang + Mốc tg) (Đồ thị quan hệ)   (Tác vụ nền)
 ```
 
-- **Signal detector**, after you opt in, captures durable ideas and entity mentions from substantive messages. Explicit remembering works without automatic capture; paid enrichment is a separate choice.
-- **Brain-first lookup** before any external API call. The cheapest, fastest, most personal information source you have.
-- **Auto-link** extracts graph links for trusted local page writes. No LLM calls; pure pattern matching on page references such as `[[people/alice-example]]`. Unresolved extracted facts keep their provenance without inventing a backing page.
-- **Cron-driven enrichment** runs while you sleep: dedup people pages, fix citations, score salience, find contradictions, prep tomorrow's tasks.
+- **Bộ dò tín hiệu (Signal detector):** Sau khi bạn cho phép, hệ thống tự động ghi nhận các ý tưởng lâu dài và thực thể từ những tin nhắn quan trọng.
+- **Truy xuất ưu tiên não bộ (Brain-first lookup):** Kiểm tra bộ não trước bất kỳ lệnh gọi API bên ngoài nào. Đây là nguồn thông tin nhanh nhất, rẻ nhất và mang tính cá nhân nhất mà bạn có.
+- **Liên kết tự động (Auto-link):** Tự động bóc tách các liên kết dạng đồ thị khi ghi tài liệu cục bộ mà không tốn chi phí gọi LLM.
+- **Làm giàu thông tin bằng Cron:** Tự động chạy khi bạn ngủ: lọc trùng các trang thông tin về con người, sửa trích dẫn, phát hiện mâu thuẫn, chuẩn bị danh sách công việc cho ngày mai.
 
-The whole loop is described in [`docs/architecture/topologies.md`](docs/architecture/topologies.md) with diagrams.
+**Bạn có thể nói với trợ lý:** *"Set up autopilot"* (cài đặt cron tự động) — *"Run dream"* (chạy chu kỳ củng cố trí nhớ) — *"Did the dream cycle run?"*.
 
-**Say to your agent:** *"Set up autopilot"* (installs the cron that runs the loop) — *"Run dream"* — *"Did the dream cycle run?"*
+---
 
-## Capabilities
+## Tích hợp
 
-GBrain combines keyword and semantic retrieval, typed graph traversal, optional cited synthesis, background jobs, and curated agent skills.
+Dữ liệu đưa vào bộ não thông qua các công thức mẫu (recipe) tại thư mục `recipes/`:
 
-**Say to your agent:** *"What search mode am I running?"* — *"Who works at acme-example?"* — *"What does my brain know about this project?"*
+- **Giọng nói (Voice):** Chuyển các cuộc gọi điện thoại thành ghi chép trong não bộ qua Twilio + OpenAI Realtime. Chi tiết: [`recipes/twilio-voice-brain.md`](recipes/twilio-voice-brain.md).
+- **Gmail + Lịch + Danh bạ Google:** Đồng bộ luồng thư, lịch hẹn, danh bạ qua OAuth cá nhân (`gbrain waiting`). Chi tiết: [`docs/guides/google-connect.md`](docs/guides/google-connect.md).
+- **Ghi chép cuộc họp + Kênh Slack:** Hỗ trợ nạp biên bản họp (Fireflies) và kênh trao đổi Slack theo lịch trình. Chi tiết: [`docs/guides/meeting-and-slack-sources.md`](docs/guides/meeting-and-slack-sources.md).
+- **Nhà cung cấp Embedding:** Hỗ trợ Voyage (mặc định: `voyage-4`), OpenAI, OpenRouter, Google Gemini, Azure OpenAI, Ollama (chạy offline cục bộ), v.v. Bảng giá và hướng dẫn tại [`docs/integrations/embedding-providers.md`](docs/integrations/embedding-providers.md).
+- **Reranker:** Hỗ trợ Voyage `rerank-3-lite` hoặc giải pháp chạy offline hoàn toàn bằng mô hình nội bộ qua llama.cpp ([hướng dẫn](docs/ai-providers/llama-server-reranker.md)).
+- **Két lưu trữ thông tin đăng nhập (Credential vault):** Lệnh `gbrain creds` quản lý an toàn các khóa OAuth và API tại máy cục bộ.
+- **Client MCP:** Hỗ trợ tất cả các ứng dụng MCP phổ biến hiện nay.
+- **Memorable (Bộ nhớ quy trình — Tùy chọn):** Bộ não nhớ *điều gì* đã diễn ra; Memorable giúp AI nhớ *cách thức* làm — các phiên lập trình đã hoàn thành trở thành các quy trình có thể tái sử dụng. Chi tiết: [`docs/memorable-agents.md`](docs/memorable-agents.md).
 
-[Capability reference](docs/guides/capabilities.md) keeps the commands, benchmark scope, cost controls, and feature-specific guides.
+---
 
-## Integrations
-
-Data flowing into the brain. Each integration is a recipe — markdown + setup hints — that ships in `recipes/` and is discoverable via `gbrain integrations list`. **Say to your agent:** *"Set up voice calls into my brain"* — *"Wire my email and calendar into the brain"* — your agent reads the recipe and walks the setup with you.
-
-- **Voice**: Phone calls create brain pages via Twilio + OpenAI Realtime (or DIY STT+LLM+TTS). Setup recipe: [`recipes/twilio-voice-brain.md`](recipes/twilio-voice-brain.md).
-- **Gmail + Calendar + Contacts (native)**: the google source kind syncs threads, events, and contacts through your own OAuth client and runs the open-loop engine on top (`gbrain waiting`). Setup: [`docs/guides/google-connect.md`](docs/guides/google-connect.md); recipes: [`recipes/email-to-brain.md`](recipes/email-to-brain.md), [`recipes/calendar-to-brain.md`](recipes/calendar-to-brain.md).
-- **Meeting notes + Slack channels (native)**: the `meetings` source kind (Fireflies first) writes one page per meeting and the `slack` source kind one page per channel per day, synced on a schedule, on brains with or without a Git repository. Setup: [`docs/guides/meeting-and-slack-sources.md`](docs/guides/meeting-and-slack-sources.md).
-- **Email + calendar (webhooks)**: webhook handlers that route to brain signals. [`docs/integrations/meeting-webhooks.md`](docs/integrations/meeting-webhooks.md).
-- **Embedding providers**: Voyage (new-install default: `voyage-4` @ 1024d), OpenAI, OpenRouter, Google Gemini, Azure OpenAI, MiniMax, Alibaba DashScope, Zhipu, Ollama (local), llama.cpp llama-server (local), LM Studio, Together, and LiteLLM proxy. Pricing matrix + decision tree in [`docs/integrations/embedding-providers.md`](docs/integrations/embedding-providers.md). Existing vectors are never converted by changing the default; use the explicitly approved [embedding migration](docs/guides/embedding-migration.md).
-- **Rerankers**: Voyage `rerank-3-lite` hosted (the default unless `search.reranker.model` is set; on in `balanced` and `tokenmax`, same `VOYAGE_API_KEY` as embeddings; `gbrain config set search.reranker.model voyage:rerank-2.5` restores the previous default), plus the `llama-server-reranker` recipe for fully-local cross-encoder rerank via llama.cpp running Qwen3-Reranker against the same `gateway.rerank()` seam. Setup walkthrough in [`docs/ai-providers/llama-server-reranker.md`](docs/ai-providers/llama-server-reranker.md).
-- **Credential vault + gateway**: `gbrain creds` manages OAuth and API credentials in a local vault ([`recipes/credential-gateway.md`](recipes/credential-gateway.md)); agent-side vault-aware secret distribution: [`docs/integrations/credential-gateway.md`](docs/integrations/credential-gateway.md).
-- **MCP clients**: every major MCP client is supported. [`docs/mcp/`](docs/mcp/) per-client setup.
-- **Memorable (procedural memory)**: optional, off by default. Your brain remembers *what* happened; Memorable makes your agent remember *how* — finished sessions become replayable procedures stored on your machine (in a standalone local store, or inside your brain database if you opt in), recalled when a similar task comes back. See the section below, and [`docs/memorable-agents.md`](docs/memorable-agents.md) for the agent-facing detail.
-
-### Memorable — remember how, not just what (optional)
-
-Memorable stores replayable procedures from coding sessions. Its relay is off by
-default and requires an explicit disclosure/consent step; it can send redacted
-traces and query text off-machine. Read the [Memorable integration guide](docs/memorable-agents.md)
-for installation, data flow, per-harness limitations, and removal.
-
-**Say to your agent:** *"Explain Memorable's data sharing before enabling it."*
-
-## Architecture
+## Kiến trúc hệ thống
 
 ```mermaid
 flowchart LR
-    Repo[Markdown brain repos] --> Sync[Sync and parse]
-    Sync --> Engine{Brain engine}
-    Engine -->|default| PGLite[(PGLite)]
-    Engine -->|shared or large| Postgres[(Postgres and pgvector)]
-    Agent[AI agent or operator] --> Surface[CLI or MCP]
-    Surface --> Ops[Contract-first operations]
-    Ops --> Search[Hybrid retrieval]
-    Ops --> Graph[Typed graph traversal]
+    Repo[Kho Markdown cục bộ] --> Sync[Đồng bộ và phân tích cú pháp]
+    Sync --> Engine{Động cơ lưu trữ}
+    Engine -->|Mặc định| PGLite[(PGLite - Nhúng sẵn)]
+    Engine -->|Quy mô lớn / Đội nhóm| Postgres[(Postgres & pgvector)]
+    Agent[Trợ lý AI hoặc Người dùng] --> Surface[Giao diện CLI hoặc MCP]
+    Surface --> Ops[Tập thao tác chuẩn]
+    Ops --> Search[Truy xuất lai]
+    Ops --> Graph[Duyệt đồ thị quan hệ]
     PGLite --> Search
     Postgres --> Search
     PGLite --> Graph
     Postgres --> Graph
-    Search --> Synthesis[Synthesis and gap analysis]
+    Search --> Synthesis[Tầng tổng hợp & Phân tích khoảng trống]
     Graph --> Synthesis
-    Synthesis --> Answer[Cited answer]
+    Synthesis --> Answer[Câu trả lời kèm trích dẫn]
 ```
 
-**Two engines, one contract.** PGLite (Postgres 17 via WASM, zero-config, default) for personal brains up to ~50K pages. Postgres + pgvector (Supabase or self-hosted) for shared, large or multi-machine brains. Both implement one `BrainEngine` contract ([`src/core/engine.ts`](src/core/engine.ts)); CLI and MCP share one op registry.
+- **Hai động cơ, cùng một chuẩn giao tiếp:** PGLite (Postgres nhúng chạy trực tiếp, không cần cài đặt máy chủ) dành cho bộ não cá nhân lên tới ~50.000 trang. Postgres + pgvector dành cho hệ thống lớn hoặc dùng chung nhiều máy.
+- **Tập tin Markdown là nguồn gốc sự thật (Source of truth):** Thư mục chứa các tệp Markdown; cơ sở dữ liệu đóng vai trò là chỉ mục có thể xây dựng lại bất cứ lúc nào từ các tệp này.
+- **Hai trục tổ chức độc lập:** **Brain** (xác định Cơ sở dữ liệu nào) và **Source** (xác định Kho lưu trữ nào bên trong cơ sở dữ liệu đó).
+- **Sức mạnh của Đồ thị:** Tìm kiếm vector giúp tìm các đoạn văn có nội dung tương đồng; duyệt đồ thị giúp lần theo các mối quan hệ thực tế giữa con người, sự kiện và tổ chức.
 
-**Canonical files preserve file-backed knowledge.** Your brain repo holds the Markdown; the database is an index rebuildable from it, and git deletes become soft-deletes. DB-only pages, unresolved facts, history and operational state need a database backup: [where your memory lives](docs/guides/where-your-memory-lives.md), [system of record](docs/architecture/system-of-record.md). Publish public subsets, share team mounts, or point a thin client at a colleague's brain. Topologies in [`docs/architecture/topologies.md`](docs/architecture/topologies.md).
+---
 
-**Two organizational axes (brain ⊥ source).** A *brain* is a database (your personal brain, a team mount you joined). A *source* is a repo inside that brain. Routing uses `.gbrain-source` dotfiles and a 6-tier precedence chain. Diagrams in [`docs/architecture/brains-and-sources.md`](docs/architecture/brains-and-sources.md).
+## Khắc phục sự cố
 
-**Why the graph matters.** Vector search finds similar text; graph retrieval follows stored relationships. Extracted edges are evidence to inspect, not proof that a relationship is true. Graph freshness depends on the write path and maintenance described in [memory boundaries](docs/guides/memory-boundaries.md#page-writes-and-the-graph-are-separate-outcomes). Deep dive: [retrieval architecture](docs/architecture/RETRIEVAL.md); [entity recall](docs/guides/entity-recall.md).
+Bắt đầu bằng lệnh `gbrain doctor`. Đối với các sự cố truy cập cơ sở dữ liệu, hãy dùng `gbrain engine status --probe` và `gbrain db-repair` trước khi thay đổi cấu hình.
 
-## Troubleshooting
+**Nói với trợ lý AI:** *"Kiểm tra tình trạng bộ não và cho tôi xem kế hoạch sửa lỗi trước khi thay đổi bất kỳ điều gì."*
 
-Start with `gbrain doctor`. For database access failures, use `gbrain engine status --probe` and `gbrain db-repair` before changing configuration.
+Xem thêm [tài liệu khắc phục sự cố](docs/guides/troubleshooting.md).
 
-**Say to your agent:** *"Check my brain health and show me the repair plan before changing anything."*
+---
 
-[Troubleshooting reference](docs/guides/troubleshooting.md) covers installation recovery, PGLite startup, embedding dimensions, locks, import failures, and sync.
+## Tài liệu tham khảo
 
-## Docs
+- [`docs/INSTALL.md`](docs/INSTALL.md) — Chi tiết mọi phương thức cài đặt
+- [`docs/guides/bootstrap.md`](docs/guides/bootstrap.md) — Quy trình khởi tạo trợ lý cá nhân
+- [Cấu trúc một trang tri thức](docs/guides/page-anatomy.md) — Frontmatter, mốc thời gian và dữ kiện
+- [`docs/what-schemas-unlock.md`](docs/what-schemas-unlock.md) — Vì sao cấu trúc schema lại quan trọng
+- [`docs/architecture/`](docs/architecture/) — Thiết kế kiến trúc và lý thuyết truy xuất
+- [`docs/guides/`](docs/guides/) — Sổ tay vận hành (kết nối Google, bóc tách ý tưởng, xử lý dữ liệu...)
+- [`docs/integrations/`](docs/integrations/) — Kết nối nguồn dữ liệu ngoài
+- [`docs/mcp/`](docs/mcp/) — Thiết lập giao thức MCP cho từng client
+- [`AGENTS.md`](AGENTS.md) — Hướng dẫn vận hành dành cho các Agent không phải Claude
+- [`CLAUDE.md`](CLAUDE.md) — Hướng dẫn vận hành chi tiết dành cho Claude Code
+- [`CONTRIBUTING.md`](CONTRIBUTING.md) — Hướng dẫn đóng góp mã nguồn
+- [`SECURITY.md`](SECURITY.md) — Mô hình bảo mật và an toàn dữ liệu
 
-- [`docs/INSTALL.md`](docs/INSTALL.md) — every install path, end to end
-- [`docs/guides/bootstrap.md`](docs/guides/bootstrap.md) — the persistent-personal-agent bootstrap contract (interview, identity files, hooks, private repo, security posture, uninstall), plus local harness mode (`gbrain bootstrap harness`) for wiring framework-spawned Claude Code/Codex sessions to a running serve
-- [Anatomy of a page](docs/guides/page-anatomy.md) — frontmatter, timeline, facts; [per-client facts](docs/guides/entity-scoped-facts.md)
-- [`docs/what-schemas-unlock.md`](docs/what-schemas-unlock.md) — why schemas matter: 7 killer use cases, the structural argument for typed page kinds, the agent-co-curates pattern
-- [`docs/schema-author-tutorial.md`](docs/schema-author-tutorial.md) — 5-minute walkthrough: fork the bundled pack, add a custom type, backfill existing pages, prove the wiring via `gbrain whoknows`
-- [`docs/architecture/`](docs/architecture/) — system design, topologies, retrieval theory
-- [`docs/guides/`](docs/guides/) — how-to runbooks (google connect, open loops, sub-agent routing, minion deployment, skill development, brain-first lookup, idea capture, diligence ingestion)
-- [`docs/integrations/`](docs/integrations/) — connecting external data sources (voice, email, calendar, embedding providers)
-- [MCP task guide](docs/mcp/README.md) — deployment and per-client setup (Claude Desktop, Code, Cursor, ChatGPT, Perplexity, Cowork)
-- [MCP administration](docs/mcp/ADMIN.md) — owner dashboard access, client registration, OAuth, permissions, and token recovery
-- [Evals](docs/eval/) and [research](docs/research/) — methods and results
-- [`docs/ethos/`](docs/ethos/) — philosophy (thin harness, fat skills, markdown as recipes, origin story)
-- [`AGENTS.md`](AGENTS.md) — entry point for non-Claude agents
-- [`CLAUDE.md`](CLAUDE.md) — entry point for Claude Code (deep operating context)
-- [`CONTRIBUTING.md`](CONTRIBUTING.md) — contributor guide, test discipline, eval-capture mode
-- [`SECURITY.md`](SECURITY.md) — install-path trust model, self-update integrity, automated scanning, OAuth threat model, hardening defaults
+---
 
-## Contributing
+## Đóng góp phát triển
 
-Run `bun run test` for the fast loop, `bun run verify` for the pre-push gate, `bun run ci:local` to run the full Docker-backed CI stack locally. Detailed test discipline in [`CONTRIBUTING.md`](CONTRIBUTING.md).
+Chạy `bun run test` để chạy nhanh kiểm thử, `bun run verify` trước khi push code, `bun run ci:local` để chạy toàn bộ quy trình CI bằng Docker tại máy cục bộ. Chi tiết xem tại [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
-Community PRs are batched into release waves rather than merged one-by-one — see the community-PR-wave process in [`docs/RELEASING.md`](docs/RELEASING.md). Contributor attribution stays attached via `Co-Authored-By:` trailers. We credit every accepted contribution in [`CHANGELOG.md`](CHANGELOG.md).
+---
 
-If you find a bug or want a feature: open an issue first. Quick fixes (typo, doc bug, obvious regression) can go straight to a PR. Anything touching schema, retrieval ranking, MCP protocol, or the security boundary needs a design discussion in the issue first.
+## Giấy phép & Tác giả
 
-## License + credit
+Phát hành theo giấy phép **MIT**. Được xây dựng bởi Garry Tan để vận hành hệ thống AI cá nhân.
 
-MIT. I built GBrain to run my OpenClaw and Hermes deployments — the production brain behind my AI agents.
-
-Origin story: [`docs/ethos/ORIGIN.md`](docs/ethos/ORIGIN.md).
-
-Community PR contributors are credited in `CHANGELOG.md` per release. Attribution for the retired provider's historical embedding and reranker integration remains in Git at `6040075c6cb95be5881cc2e1b76ef7d71f4e5d29`. Voyage AI for the asymmetric-encoding recipe template. Ramp Labs for the search quality improvements lineage.
+Câu chuyện nguồn gốc: [`docs/ethos/ORIGIN.md`](docs/ethos/ORIGIN.md).
